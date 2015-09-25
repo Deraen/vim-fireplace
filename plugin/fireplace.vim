@@ -1246,16 +1246,20 @@ function! fireplace#info(symbol) abort
       return response
     endif
   endif
-  let cmd =
-        \ '(if-let [m (meta (resolve ' . s:qsym(a:symbol) .'))]'
-        \ . ' {:name (:name m)'
-        \ .  ' :ns (:ns m)'
-        \ .  ' :resource (:file m)'
-        \ .  ' :line (:line m)'
-        \ .  ' :doc (:doc m)'
-        \ .  ' :arglists-str (str (:arglists m))}'
-        \ . ' {})'
-  return fireplace#evalparse(cmd)
+
+  if expand('%:e') !=# 'cljs'
+    let cmd =
+          \ '(if-let [m (meta (resolve ' . s:qsym(a:symbol) .'))]'
+          \ . ' {:name (:name m)'
+          \ .  ' :ns (:ns m)'
+          \ .  ' :resource (:file m)'
+          \ .  ' :line (:line m)'
+          \ .  ' :doc (:doc m)'
+          \ .  ' :arglists-str (str (:arglists m))}'
+          \ . ' {})'
+    return fireplace#evalparse(cmd)
+  endif
+  return {}
 endfunction
 
 function! fireplace#source(symbol) abort
